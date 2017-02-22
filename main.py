@@ -17,11 +17,12 @@ import time
 #question = "Uber的罰款議題"
 #question = "中國與美國未來的關係"
 #question = "大學評鑑"
-question = "客運致死"
+#question = "客運致死"
 #question = "台幣外匯"
 #question = "論文造假"
+question = "女大生去麵包坊實習被索賠"
 # No filter #
-
+"""
 tabo_keywords = []
 print("============= No filter ===============")
 print('1st keywords:', end="") 
@@ -119,7 +120,7 @@ print(keywords)
 #print('tabo', end="")
 tabo_keywords.extend(news_module.keywords_tabo(keywords))
 #print(tabo_keywords)
-"""
+
 
 
 
