@@ -129,13 +129,18 @@ def news_parse(keywords):
 				time.sleep(1)
 
 				title = news.select("._HId")[0].text # new title
-				href = news.find("a")["href"]        # new hyper-link
-
+				href = news.find("a")["href"]        # new hyper-link 
+                
 				# 判斷現在的新聞,是否為新聞清單裡面,可以進行處理的
 				now_href = [key for key in keys if key in href]
 				if(now_href ==[]): # 如果不在清單裡，就跳到下一則新聞處理
 					continue
 
+				# 這篇新聞屬於哪個媒體
+				now_press = taiwan_press[now_href[0]] 
+				if now_press == "businessweekly": #單頁閱讀
+					href = href + "&p=0"
+                    
 				# 讀取新聞的超連結
 				news_res = requests.get(href, headers=headers)
 				news_res.encoding = 'utf-8'
@@ -144,8 +149,6 @@ def news_parse(keywords):
 				# 用新聞標題當儲存文件的名稱
 				file_name = title + ".txt"
 
-				# 這篇新聞屬於哪個媒體
-				now_press = taiwan_press[now_href[0]] 
 
 				try:
 
@@ -319,20 +322,27 @@ def news_associated_keywords(keywords, news_path):
 			textnum += 1
 			#TFIDF_keywords.extend(jieba.analyse.extract_tags(text, topK=15, withWeight=False) )
 
-	print("The number of news is :" + textnum)
+	print("The number of news is :" + str(textnum))
             
 	all_keywords = TFIDF_keywords + TEXTRANK_keywords
 	associated_keywords = list()
 	top10_assoicated_words = Counter(all_keywords).most_common(10)
 	print(top10_assoicated_words)
-	for key, val in top10_assoicated_words:
-		if key not in keywords and val > 1:   
-			associated_keywords.append(key)
-            
-	if len(associated_keywords) > 5:     
-		return associated_keywords[0:5]  
+    
+	associated_keywords = [tuple_keywords for tuple_keywords in a if tuple_keywords[0] not in keywords]   
+
+	return_keywords = list()
+	if len(associated_keywords) > 5:    
+		top_weight = associated_keywords[4][1] # top 5
+		for key, val in associated_keywords:
+			if val >= top_weight:
+				return_keywords.append(key)
+
 	else: 
-		return(associated_keywords)
+		for key, val in associated_keywords:
+			return_keywords.append(key)
+            
+	return(return_keywords)
 
 #==============================================================================================#
 #================================= news_word2vec===============================================#
@@ -437,6 +447,10 @@ def news_clean(press, content):
 		clean_content = re.sub("來稿請寄onlineopinions@appledaily.com.tw，文長以500字為度，一經錄用，將發布在蘋果日報即時新聞區，唯不付稿酬。請勿一稿兩投，本報有刪改權，當天未見報，請另行處理，不另退件或通知。", '', clean_content)
 		clean_content = re.sub("《蘋果日報即時新聞》新闢《即時論壇》，歡迎讀者投稿，對新聞時事表達意見。", '', clean_content)
 		clean_content = re.sub("你對新聞是否不吐不快？", '', clean_content)
+		clean_content = clean_content.replace("\n", "")
+		clean_content = clean_content.replace("\r", "")
+		clean_content = clean_content.replace("\t", "")
+		clean_content = clean_content.replace(" ", "")
 
        
 	elif press == 'ltn':
@@ -445,7 +459,11 @@ def news_clean(press, content):
 		clean_content = re.sub(r"\（.*?\）", '', clean_content) 
 		clean_content = re.sub(r"\(.*?\)", '', clean_content) 
 		clean_content = re.sub(r"\〔.*?\〕", '', clean_content)  
-		clean_content = re.sub(r"\【.*?\】", '', clean_content)       
+		clean_content = re.sub(r"\【.*?\】", '', clean_content)    
+		clean_content = clean_content.replace("\n", "")
+		clean_content = clean_content.replace("\r", "")
+		clean_content = clean_content.replace("\t", "")
+		clean_content = clean_content.replace(" ", "")
 
 	elif press == 'chinatimes':
 		split_contents = clean_content.splitlines()
@@ -454,6 +472,10 @@ def news_clean(press, content):
 		clean_content = re.sub(r"\(.*?\)", '', clean_content) 
 		clean_content = re.sub(r"\〔.*?\〕", '', clean_content)  
 		clean_content = re.sub(r"\【.*?\】", '', clean_content) 
+		clean_content = clean_content.replace("\n", "")
+		clean_content = clean_content.replace("\r", "")
+		clean_content = clean_content.replace("\t", "")
+		clean_content = clean_content.replace(" ", "")
   
 	elif press == 'udn.news':
 		clean_content = re.sub(r"\（.*?\）", '', clean_content) 
@@ -465,6 +487,10 @@ def news_clean(press, content):
 		clean_content = re.sub(r"美聯社", '', clean_content)  
 		clean_content = re.sub(r"圖／", '', clean_content) 
 		clean_content = re.sub(r"圖擷自", '', clean_content)  
+		clean_content = clean_content.replace("\n", "")
+		clean_content = clean_content.replace("\r", "")
+		clean_content = clean_content.replace("\t", "")
+		clean_content = clean_content.replace(" ", "")
     
 	elif press == 'cna':
 		split_contents = clean_content.splitlines()
@@ -474,6 +500,10 @@ def news_clean(press, content):
 		clean_content = re.sub(r"\〔.*?\〕", '', clean_content)  
 		clean_content = re.sub(r"\【.*?\】", '', clean_content) 
 		clean_content = re.sub(r"1060.*", '', clean_content) 
+		clean_content = clean_content.replace("\n", "")
+		clean_content = clean_content.replace("\r", "")
+		clean_content = clean_content.replace("\t", "")
+		clean_content = clean_content.replace(" ", "")
         
 	elif press == 'thenewslens':
 		clean_content = re.sub(r"googletag.*", '', clean_content) 
@@ -487,6 +517,8 @@ def news_clean(press, content):
 		clean_content = re.sub(r"\〔.*?\〕", '', clean_content)  
 		clean_content = re.sub(r"\【.*?\】", '', clean_content) 
 		clean_content = clean_content.replace("\n", "")
+		clean_content = clean_content.replace("\r", "")
+		clean_content = clean_content.replace("\t", "")
 		clean_content = clean_content.replace(" ", "")
         
 	elif press == 'storm': 
@@ -495,18 +527,19 @@ def news_clean(press, content):
 		clean_content = re.sub(r"\〔.*?\〕", '', clean_content)  
 		clean_content = re.sub(r"\【.*?\】", '', clean_content) 
 		clean_content = re.sub(r"[A-Za-z0-9]*", '', clean_content)
-		clean_content = clean_content.replace(" ", "")
-		clean_content = clean_content.replace("\n", "")
 		clean_content = re.sub(r"[\.\{\;\)\}\#\/\—\'\,\@\-\&\:\[\]]*", '', clean_content)
-		clean_content = clean_content.replace("\t", "")
 		clean_content = clean_content.replace("年月日", "")
-		clean_content = clean_content.replace("\r", "")
-		clean_content = clean_content.replace(" ", "")
 		clean_content = clean_content.replace("\’", "")
-        
+		clean_content = clean_content.replace("\n", "")
+		clean_content = clean_content.replace("\r", "")
+		clean_content = clean_content.replace("\t", "")
+		clean_content = clean_content.replace(" ", "")
         
 	elif press == "businessweekly": 
 		clean_content = clean_content.replace("\n", "")
+		clean_content = clean_content.replace("\r", "")
+		clean_content = clean_content.replace("\t", "")
+		clean_content = clean_content.replace(" ", "")
 		clean_content = re.sub(r"資料整理：.*", '', clean_content)
         
 	return(clean_content)
