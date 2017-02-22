@@ -310,14 +310,14 @@ def news_cut(path) :
 def news_associated_keywords(keywords, news_path):
 	jieba.analyse.set_stop_words("jieba_dict/stop_words.txt")
 	textnum = 0
-
 	TFIDF_keywords = tfidf_top_words(news_path, topk=5)
     
+	TEXTRANK_keywords = []
 	with open(news_path,'r',encoding='utf-8') as content :
 		for text in content:
-			#TFIDF_keywords.extend(jieba.analyse.extract_tags(text, topK=15, withWeight=False) )
 			TEXTRANK_keywords.extend(jieba.analyse.textrank(text, topK=5, withWeight=False))
 			textnum += 1
+			#TFIDF_keywords.extend(jieba.analyse.extract_tags(text, topK=15, withWeight=False) )
 
 	print("The number of news is :" + textnum)
             
