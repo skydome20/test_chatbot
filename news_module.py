@@ -302,6 +302,7 @@ def news_cut(path) :
 				#logging.info("已完成前 %d 行的斷詞" % texts_num)
                 
 	output.close()
+	return (output_path)
 
 
 #==============================================================================================#
@@ -552,7 +553,7 @@ def news_clean(press, content):
 #==============================================================================================#
 
 def news_similar_filter(path):
-	path = '/home/skydome20/Desktop/test.txt'
+
 	docs = list()
 	with open(path,'r',encoding='utf-8') as doc_set:
 		for doc in doc_set:
@@ -603,6 +604,7 @@ def news_similar_filter(path):
 	for ind in keep_docs:  
 		f.write(docs[ind])
 	f.close()
+	return(path)
             
 #==============================================================================================#
 #================================= keywords_tabo===============================================#
@@ -619,9 +621,7 @@ def keywords_tabo(keywords):
 #==============================================================================================#
 #================================= tfidf ======================================================#
 #==============================================================================================#
-def tfidf_top_words(news_path, topk=5):
-	news_cut(news_path)
-	path = "/home/skydome20/Desktop/test.txt"
+def tfidf_top_words(path, topk=5):
 
 	# read files
 
