@@ -19,10 +19,11 @@ import time
 #question = "大學評鑑"
 #question = "客運致死"
 #question = "台幣外匯"
-#question = "論文造假"
-question = "女大生去麵包坊實習被索賠"
+#question = "台大論文造假"
+#question = "女大生去麵包坊實習被索賠"
+question = "最近石油的影響或走向"
 # No filter #
-"""
+
 tabo_keywords = []
 print("============= No filter ===============")
 print('1st keywords:', end="") 
@@ -33,7 +34,7 @@ time.sleep(5)
 #print('tabo', end="")
 tabo_keywords.extend(news_module.keywords_tabo(keywords))
 #print(tabo_keywords)
-
+"""
 time.sleep(5)
 print('2nd keywords:', end="")
 keywords = news_module.news_associated_keywords(tabo_keywords, news_bigTable_path[1])
@@ -61,11 +62,11 @@ print(keywords)
 #print('tabo', end="")
 tabo_keywords.extend(news_module.keywords_tabo(keywords))
 #print(tabo_keywords)
+
+
+
+
 """
-
-
-
-
 
 # Similar filter #
 tabo_keywords = []
@@ -85,7 +86,7 @@ news_module.news_cut(news_bigTable_path[1])
 time.sleep(5)
 news_module.news_similar_filter(news_bigTable_path[1])
 time.sleep(5)
-keywords = news_module.news_associated_keywords(tabo_keywords, news_bigTable_path[1])
+keywords = news_module.news_associated_keywords(tabo_keywords, '/home/skydome20/Desktop/test.txt')
 print(keywords)
 news_bigTable_path = news_module.news_parse(keywords)
 time.sleep(5)
@@ -99,7 +100,7 @@ news_module.news_cut(news_bigTable_path[1])
 time.sleep(5)
 news_module.news_similar_filter(news_bigTable_path[1])
 time.sleep(5)
-keywords = news_module.news_associated_keywords(tabo_keywords, news_bigTable_path[1])
+keywords = news_module.news_associated_keywords(tabo_keywords, '/home/skydome20/Desktop/test.txt')
 print(keywords)
 news_bigTable_path = news_module.news_parse(keywords)
 time.sleep(5)
@@ -115,7 +116,7 @@ news_module.news_cut(news_bigTable_path[1])
 time.sleep(5)
 news_module.news_similar_filter(news_bigTable_path[1])
 time.sleep(5)
-keywords = news_module.news_associated_keywords(tabo_keywords, news_bigTable_path[1])
+keywords = news_module.news_associated_keywords(tabo_keywords, '/home/skydome20/Desktop/test.txt')
 print(keywords)
 #print('tabo', end="")
 tabo_keywords.extend(news_module.keywords_tabo(keywords))

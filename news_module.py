@@ -329,7 +329,7 @@ def news_associated_keywords(keywords, news_path):
 	top10_assoicated_words = Counter(all_keywords).most_common(10)
 	print(top10_assoicated_words)
     
-	associated_keywords = [tuple_keywords for tuple_keywords in a if tuple_keywords[0] not in keywords]   
+	associated_keywords = [tuple_keywords for tuple_keywords in top10_assoicated_words if tuple_keywords[0] not in keywords]   
 
 	return_keywords = list()
 	if len(associated_keywords) > 5:    
@@ -557,7 +557,7 @@ def news_similar_filter(path):
 	with open(path,'r',encoding='utf-8') as doc_set:
 		for doc in doc_set:
 			docs.append(doc)
-
+	print("The original news: " + str(len(docs)) )
 	# doc to words
 	texts = [[word for word in doc.split()] for doc in docs]
 
@@ -598,7 +598,7 @@ def news_similar_filter(path):
 	with open(path,'r',encoding='utf-8') as doc_set:
 		for doc in doc_set:
 			docs.append(doc)
-
+	print("The keep news: " + str(len(keep_docs)) )
 	f = open(path, "w")
 	for ind in keep_docs:  
 		f.write(docs[ind])
