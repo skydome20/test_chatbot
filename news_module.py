@@ -60,7 +60,7 @@ logger.propagate = False
 #==============================================================================================#
 #=================================parse_news===================================================#
 #==============================================================================================#
-def news_parse(keywords):
+def news_parse(keywords, intersect_or_union):
     
 	"""預備工作 """
 	# 瀏覽器型態 為了讓程式像是瀏覽器去訪問網站
@@ -86,17 +86,16 @@ def news_parse(keywords):
 	"""根據關鍵字,網路爬資料"""
 
 	# "google news url" 
-	# url = "https://www.google.com.tw/search?tbm=nws&q=川普+site:thenewslens.com"
-	url = "https://www.google.com.tw/search?tbm=nws&q="
-	#url = url + "+".join(keywords) # 交集
-	url = url + "|".join(keywords) # 聯集
+	# url = "https://www.google.com.tw/search?tbm=nws&q=allintext:川普+site:thenewslens.com"
+	url = "https://www.google.com.tw/search?tbm=nws&q=allintext:"
+	url = url + intersect_or_union.join(keywords) 
 	urls = list()
 	for news_href in keys:
 		urls.append(url + "+site:" + news_href)
     
 	#儲存所有新聞標題大表
 	title_folder = "/home/skydome20/Desktop/dbot/dbot.py3/news_folder/title/"
-	title_output_path = title_folder  + "_".join(keywords) + "title" + ".txt"
+	title_output_path = title_folder  + "_".join(keywords) + "_title" + ".txt"
 	output_title = open(title_output_path, 'w', encoding='utf-8')
 
 	#儲存所有新聞大表
@@ -109,13 +108,16 @@ def news_parse(keywords):
 	href_output_path = href_folder  + "_".join(keywords) + "_href" + ".txt"
 	output_href = open(href_output_path, 'w', encoding='utf-8')
 
-	time.sleep(2)
+	#儲存所有新聞大表時間
+	time_folder = "/home/skydome20/Desktop/dbot/dbot.py3/news_folder/time/"
+	time_output_path = time_folder  + "_".join(keywords) + "_time" + ".txt"
+	output_time = open(time_output_path, 'w', encoding='utf-8')
 
 	for url in urls: # 每間媒體挑20篇新聞
     
-		#print(url)
+		print(url)
 		page = 0 
-		while(page < 21): # 20篇新聞
+		while(page < 51): # 50篇新聞
 			time.sleep(2)
 			query_url = url + "&start=" + str(page)
 			# 建立連結 #
@@ -130,7 +132,8 @@ def news_parse(keywords):
 
 				title = news.select("._HId")[0].text # new title
 				href = news.find("a")["href"]        # new hyper-link 
-                
+				news_time = news.select("._uQb")[0].text # new title
+				print(title + " " + news_time)
 				# 判斷現在的新聞,是否為新聞清單裡面,可以進行處理的
 				now_href = [key for key in keys if key in href]
 				if(now_href ==[]): # 如果不在清單裡，就跳到下一則新聞處理
@@ -215,8 +218,9 @@ def news_parse(keywords):
 					# 新聞大表
 					output_title.write(title + "\n")
 					output_news.write(content + "\n")
-					output_href.write(href + "\n")		
-
+					output_href.write(href + "\n")
+					output_time.write(news_time + "\n")
+                    
 				except:
 					aaa = 10
 
@@ -224,10 +228,12 @@ def news_parse(keywords):
 			#print('...Parsing...')
 
 	# 新聞大表
+	output_title.close()
 	output_news.close()
 	output_href.close()
+	output_time.close()
 	#print("大表路徑:" + news_output_path)
-	return( (title_output_path, news_output_path, href_output_path))
+	return( (title_output_path, news_output_path, href_output_path, time_output_path))
 
 
 #==============================================================================================#
@@ -331,7 +337,7 @@ def news_associated_keywords(keywords, news_path):
 	print(top10_assoicated_words)
     
 	associated_keywords = [tuple_keywords for tuple_keywords in top10_assoicated_words if tuple_keywords[0] not in keywords]   
-
+	print(associated_keywords)
 	return_keywords = list()
 	if len(associated_keywords) > 5:    
 		top_weight = associated_keywords[4][1] # top 5
@@ -587,7 +593,7 @@ def news_similar_filter(path):
 		else:
 			m = list(i)
 			# simlar_doc
-			simlar_docs = [index for index,value in enumerate(m) if value > 0.75 and index > ind]
+			simlar_docs = [index for index,value in enumerate(m) if value > 0.9 and index > ind]
 			# remove simlar_doc ind
 			for elem in simlar_docs:
 				if elem in keep_docs:

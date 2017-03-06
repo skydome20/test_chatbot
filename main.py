@@ -19,10 +19,26 @@ import time
 #question = "大學評鑑"
 #question = "客運致死"
 #question = "台幣外匯"
-#question = "台大論文造假"
+question = "台大論文造假"
 #question = "女大生去麵包坊實習被索賠"
-question = "最近石油的影響或走向"
+#question = "最近石油的影響或走向"
+#question = "張忠謀退休"
 # No filter #
+
+
+
+#print(time.ctime())
+#keywords = question_module.handler(question)
+#print(keywords)
+#ews_bigTable_path = news_module.news_parse(keywords, "+")
+#print(news_bigTable_path)
+cut_news_path = news_module.news_cut("/home/skydome20/Desktop/dbot/dbot.py3/news_folder/all/台大_論文造假.txt")
+keywords = news_module.news_associated_keywords([], cut_news_path)
+
+
+
+
+
 """
 tabo_keywords = []
 print("============= No filter ===============")
@@ -69,7 +85,6 @@ tabo_keywords.extend(news_module.keywords_tabo(keywords))
 
 
 
-"""
 
 # Similar filter #
 tabo_keywords = []
@@ -127,6 +142,7 @@ tabo_keywords.extend(news_module.keywords_tabo(keywords))
 
 
 
+"""
 
 
 
